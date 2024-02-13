@@ -373,6 +373,7 @@ class SQSListener(Thread):
 
         try:
             self._queue_url = self._sqs.get_queue_url(QueueName=self._queue_name)["QueueUrl"]
+            print(f"Queue url discovered: {self._queue_url}")
         except ClientError as error:
             logging.exception(f"Couldn't get queue named {self._queue_name}")
             raise error

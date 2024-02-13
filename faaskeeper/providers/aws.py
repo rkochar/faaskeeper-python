@@ -45,7 +45,7 @@ class AWSClient(ProviderClient):
             pass
         elif cfg.writer_queue == QueueType.SQS:
             self._msg_id = 0
-            self._queue_name = f"faaskeeper-{self._config.deployment_name}-writer-sqs.fifo"
+            self._queue_name = f"faaskeeper_{self._config.deployment_name}_writer_sqs.fifo"
             self._sqs_client = boto3.client("sqs", self._config.deployment_region)
             response = self._sqs_client.get_queue_url(QueueName=self._queue_name)
             self._sqs_queue_url = response["QueueUrl"]
@@ -78,6 +78,7 @@ class AWSClient(ProviderClient):
                     payload["data"]["B"] = base64.b64encode(payload["data"]["B"]).decode()
 
                 attributes: dict = {}
+                print(f"Sending message to {self._sqs_queue_url} with payload {payload}")
                 # FIXME: use response
                 self._sqs_client.send_message(
                     QueueUrl=self._sqs_queue_url,
@@ -164,7 +165,7 @@ class AWSClient(ProviderClient):
         except Exception as e:
             raise AWSException(
                 f"Failure on AWS client on DynamoDB table "
-                f"faaskeeper-{self._config.deployment_name}-write-queue: {str(e)}"
+                f"faaskeeper_{self._config.deployment_name}_write_queue: {str(e)}"
             )
 
     def register_watch(

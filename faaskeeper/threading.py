@@ -23,13 +23,14 @@ class Future:
     def get(self):
         self.wait()
         if self._exception:
+            print(f"future exception: {self._exception}")
             raise self._exception
         else:
             return self._result
 
     def wait(self) -> bool:
         if not self._ready:
-            self._event.wait()
+            self._event.wait(timeout=5)
             self._event.set()
         return not self._exception
 
